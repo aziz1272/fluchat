@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "429533448154",
+    "project_id": "fir-fluchat",
+    "storage_bucket": "fir-fluchat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:429533448154:android:696e57c3d59594a5f222e3",
+        "android_client_info": {
+          "package_name": "com.azizbek.fluchat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC38T4CkUS0dTifVa0gq7SfImBwoh6xKZU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
