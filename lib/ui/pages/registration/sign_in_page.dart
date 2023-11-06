@@ -1,6 +1,13 @@
-import 'package:fluchat/ui/pages/sign_in_up_pages/sign_up_page.dart';
-import 'package:fluchat/ui/pages/splash_pages/splash_page.dart';
+import 'package:fluchat/src/config/routes/app_loader.dart';
+import 'package:fluchat/src/config/routes/app_route.dart';
+import 'package:fluchat/src/config/routes/app_toast.dart';
+import 'package:fluchat/src/config/theme/app_colors.dart';
+import 'package:fluchat/src/config/theme/font_theme.dart';
+import 'package:fluchat/src/services/auth_services/auth_services.dart';
+import 'package:fluchat/ui/pages/registration/profile_page.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'sign_up_page.dart';
 
 class SignInPage extends StatefulWidget {
   static const String id = "sign_in_page";
@@ -12,7 +19,30 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  final passwordController = TextEditingController();
+  final emailController = TextEditingController();
   bool _obscureText = true;
+
+  void signIn() async {
+    AuthServices authServices = AuthServices();
+    final password = passwordController.text.trim();
+    final email = emailController.text.trim();
+
+    showLoader(context);
+    authServices.signIn(email, password).then((value) {
+      Go(context).close();
+
+      if (value) {
+        showToast(context: context, message: 'Login successful!');
+        Go(context).id(ProfilePage.id);
+      } else {
+        showToast(
+            context: context,
+            message:
+            "Error: Email or Password entered incorrectly. Please check and try again!");
+      }
+    });
+  }
 
   void _toggle() {
     setState(() {
@@ -23,33 +53,19 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, SplashPage.id);
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Color(0xff0F1828),
-            size: 24,
-          ),
-        ),
-      ),
-      body: Container(
-        height: double.infinity,
-        width: double.infinity,
-        child: ListView(
+      body: SingleChildScrollView(
+        child: Column(
           children: [
             const Padding(
               padding: EdgeInsets.only(
-                top: 79,
+                top: 169,
                 left: 40,
                 right: 40,
               ),
               child: Text(
                 "Enter Your Email And Password",
                 style: TextStyle(
-                  fontFamily: "mulish",
+                  fontFamily: mulish,
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
                 ),
@@ -62,15 +78,16 @@ class _SignInPageState extends State<SignInPage> {
                 padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                 height: 44,
                 width: 327,
-                decoration: const BoxDecoration(color: Color(0xffF7F7FC)),
-                child: const TextField(
+                decoration:
+                    const BoxDecoration(color: AppColors.textfieldcolor),
+                child: TextField(
+                  controller: emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                      floatingLabelStyle: TextStyle(color: Colors.red),
+                  decoration: const InputDecoration(
                       hintText: "Enter Email",
                       hintStyle: TextStyle(
                         fontSize: 14,
-                        fontFamily: "mulish",
+                        fontFamily: mulish,
                         fontWeight: FontWeight.w600,
                       ),
                       enabledBorder: OutlineInputBorder(
@@ -88,8 +105,10 @@ class _SignInPageState extends State<SignInPage> {
                 padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                 height: 44,
                 width: 327,
-                decoration: const BoxDecoration(color: Color(0xffF7F7FC)),
+                decoration:
+                    const BoxDecoration(color: AppColors.textfieldcolor),
                 child: TextField(
+                  controller: passwordController,
                   obscureText: _obscureText,
                   obscuringCharacter: "*",
                   keyboardType: TextInputType.visiblePassword,
@@ -102,11 +121,10 @@ class _SignInPageState extends State<SignInPage> {
                             color: Colors.black87),
                         onPressed: _toggle,
                       ),
-                      floatingLabelStyle: const TextStyle(color: Colors.red),
                       hintText: "Enter Password",
                       hintStyle: const TextStyle(
                         fontSize: 14,
-                        fontFamily: "mulish",
+                        fontFamily: mulish,
                         fontWeight: FontWeight.w600,
                       ),
                       enabledBorder: const OutlineInputBorder(
@@ -118,54 +136,49 @@ class _SignInPageState extends State<SignInPage> {
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 24,top: 36),
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, SignUpPage.id);
-                    },
-                    child: const Text(
-                      "Sign up",
+            GestureDetector(
+              onTap: signIn,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 24, right: 24, top: 36),
+                child: Container(
+                  height: 52,
+                  width: 327,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: AppColors.buttoncolor),
+                  child: const Center(
+                    child: Text(
+                      "Log in",
                       style: TextStyle(
-                        color: Color(0xff002DE3),
-                        fontWeight: FontWeight.w600,
-                        fontFamily: "mulish",
+                        color: AppColors.buttontextcolor,
                         fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: mulish,
                       ),
-                      textAlign: TextAlign.start,
                     ),
                   ),
                 ),
-              ],
-            )
-          ],
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: GestureDetector(
-        onTap: () {},
-        child: Padding(
-          padding: const EdgeInsets.only(left: 24, right: 24, top: 36),
-          child: Container(
-            height: 52,
-            width: 327,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: const Color(0xff002DE3)),
-            child: const Center(
-              child: Text(
-                "Log in",
-                style: TextStyle(
-                  color: Color(0xffF7F7FC),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
               ),
             ),
-          ),
+            Padding(padding: EdgeInsets.only(top: 36),
+            child: RichText(
+              text: TextSpan(
+                  text: "Create a new account:",
+                  style: TextStyle(color: Colors.black),
+                  children: [
+                    TextSpan(
+                        text: "Enter",
+                        style: TextStyle(
+                          color: AppColors.buttoncolor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.pushReplacementNamed(context, SignUpPage.id);
+                          }),
+                  ]),
+            ),),
+          ],
         ),
       ),
     );
